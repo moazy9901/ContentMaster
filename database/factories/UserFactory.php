@@ -22,9 +22,9 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'image' => null,
             'role' => fake()->randomElement([
-                'Admin',
-                'Editor',
-                'User'
+                'admin',
+                'editor',
+                'user'
             ]),
 
 

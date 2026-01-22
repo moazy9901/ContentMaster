@@ -12,11 +12,11 @@ class UserSeeder extends Seeder
     {
         // Explicit main admin user
         User::firstOrCreate(
-            ['email' => 'moazy9901@gmail.com'],
+            ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Main Admin',
-                'password' => Hash::make('moazy9901'),
-                'role' => 'Super_Admin',
+                'password' => Hash::make('admin123'),
+                'role' => 'super_admin',
             ]
         );
 
