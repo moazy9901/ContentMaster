@@ -69,11 +69,13 @@
             </a>
 
             <div class="flex space-x-3">
+                @can('update', App\Models\Category::class)
                 <a href="{{ route('categories.edit', $category) }}"
                     class="px-5 py-2.5 rounded-xl bg-yellow-500 text-white hover:bg-yellow-600 transition">
                     {{ __('site.Edit') }}
                 </a>
-
+                @endcan
+                @can('delete', App\Models\Category::class)
                 <form action="{{ route('categories.destroy', $category) }}" method="POST"
                     onsubmit="return confirm('Delete this category?')">
                     @csrf
@@ -82,6 +84,7 @@
                         {{ __('site.Delete') }}
                     </button>
                 </form>
+                @endcan
             </div>
 
         </div>

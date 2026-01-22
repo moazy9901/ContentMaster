@@ -5,11 +5,12 @@
         <!-- Page Header -->
         <div class="flex items-center justify-between mb-8">
             <h1 class="text-3xl font-bold text-gray-800">{{ __('site.categories') }}</h1>
-
+            @can('create', App\Models\Category::class)
             <a href="{{ route('categories.create') }}"
                 class="inline-flex items-center px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition">
                 + {{ __('site.new catogory') }}
             </a>
+            @endcan
         </div>
 
         <!-- categories Grid -->
@@ -46,11 +47,13 @@
                             </a>
 
                             <div class="flex space-x-2">
+                                @can('update', $catogory)
                                 <a href="{{ route('categories.edit', $catogory) }}"
                                     class="px-3 py-1.5 rounded-lg text-sm bg-yellow-100 text-yellow-700 hover:bg-yellow-200">
                                     {{ __('site.Edit') }}
                                 </a>
-
+                                @endcan
+                                @can('delete', $catogory)
                                 <form action="{{ route('categories.destroy', $catogory) }}" method="POST"
                                     onsubmit="return confirm('Delete this catogory?')">
                                     @csrf
@@ -59,6 +62,7 @@
                                         {{ __('site.Delete') }}
                                     </button>
                                 </form>
+                                @endcan
                             </div>
 
                         </div>

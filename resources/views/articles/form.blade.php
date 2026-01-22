@@ -69,17 +69,17 @@
         <!-- Meta Description -->
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-2">{{ __('site.Meta Description') }}</label>
-            <textarea name="meta_description" rows="4"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">{{ old('meta_description', $article->description ?? '') }}</textarea>
-            @error('meta_description') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
+            <textarea name="description" rows="4"
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">{{ old('description', $article->description ?? '') }}</textarea>
+            @error('description') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
         </div>
 
         <!-- Keywords -->
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-2">{{ __('site.Meta Keywords') }}</label>
-            <input type="text" name="meta_keywords" value="{{ old('meta_keywords', $article->keywords ?? '') }}"
+            <input type="text" name="keywords" value="{{ old('keywords', $article->keywords ?? '') }}"
                 class="w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
-            @error('meta_keywords') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
+            @error('keywords') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
         </div>
 
         <!-- Submit -->

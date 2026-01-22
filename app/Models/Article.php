@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Policies\ArticlePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 
+#[UsePolicy(ArticlePolicy::class)]
 class Article extends Model
 {
     /** @use HasFactory<\Database\Factories\ArticleFactory> */

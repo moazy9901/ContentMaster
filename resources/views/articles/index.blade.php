@@ -5,11 +5,12 @@
         <!-- Page Header -->
         <div class="flex items-center justify-between mb-8">
             <h1 class="text-3xl font-bold text-gray-800">{{ __('site.articles') }}</h1>
-
+            @can('create', App\Models\Article::class)
             <a href="{{ route('articles.create') }}"
                class="inline-flex items-center px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition">
                 + {{ __('site.new articles') }}
             </a>
+            @endcan
         </div>
 
         <!-- Articles Grid -->
@@ -51,11 +52,13 @@
                             </a>
 
                             <div class="flex space-x-2">
+                                @can('update', $article)
                                 <a href="{{ route('articles.edit', $article) }}"
                                    class="px-3 py-1.5 rounded-lg text-sm bg-yellow-100 text-yellow-700 hover:bg-yellow-200">
                                     {{ __('site.Edit') }}
                                 </a>
-
+                                @endcan
+                                @can('delete', $article)
                                 <form action="{{ route('articles.destroy', $article) }}" method="POST"
                                       onsubmit="return confirm('Delete this article?')">
                                     @csrf
@@ -65,6 +68,7 @@
                                         {{ __('site.Delete') }}
                                     </button>
                                 </form>
+                                @endcan
                             </div>
 
                         </div>

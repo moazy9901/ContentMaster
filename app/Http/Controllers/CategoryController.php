@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Services\ImageService;
 use App\Services\SlugValidationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
 {
@@ -24,6 +26,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
+        Gate::authorize('update', Category::class);
         return view('categories.create');
     }
 
@@ -37,6 +40,7 @@ class CategoryController extends Controller
         if ($request->hasFile('image')) {
             $data['image'] = ImageService::upload($request->file('image')  , 'categories');
         }
+        $validData['user_id'] = Auth::id();
         Category::create($data);
         return redirect()->route('categories.index')
             ->with('success', 'Category created successfully!');
@@ -56,6 +60,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        Gate::authorize('update', $category);
         return view('categories.edit', compact('category'));
     }
 
@@ -64,11 +69,13 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequest $request, Category $category)
     {
+        Gate::authorize('update', $category);
         $data = $request->validated();
         if ($request->hasFile('image')) {
             ImageService::delete($category->image);
             $data['image'] = ImageService::upload($request->file('image') , 'categories');
         }
+        $validData['user_id'] = Auth::id();
         $category->update($data);
         return redirect()->route('categories.show' , compact('category'))
             ->with('success', 'Category updated successfully!');
@@ -79,6 +86,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        Gate::authorize('delete', $category);
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully!');
     }

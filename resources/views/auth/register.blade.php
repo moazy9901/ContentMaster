@@ -130,8 +130,8 @@
                         <select name="role" id="role"
                             class="block mt-1.5 w-full rounded-lg border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">
                             <option value="">-- Choose Role --</option>
-                            <option value="Editor">Editor</option>
-                            <option value="User">User</option>
+                            <option value="editor">Editor</option>
+                            <option value="user">User</option>
                         </select>
                         <x-input-error :messages="$errors->get('role')" class="mt-2" />
                     </div>
