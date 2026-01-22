@@ -29,11 +29,6 @@
                                 class="text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
                         {{ __('site.categories') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('excel.index')" 
-                                :active="request()->routeIs('excel.index')" 
-                                class="text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
-                        {{ __('site.excel') }}
-                    </x-nav-link>
                 </div>
             </div>
 

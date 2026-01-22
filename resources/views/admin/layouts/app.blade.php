@@ -97,8 +97,8 @@
             <!-- Logo / Header -->
             <div class="h-16 px-4 md:px-6 flex items-center justify-between border-b border-gray-200">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 min-w-0">
-                    <img src="{{ asset('admin.avif') }}" alt="Logo" class="h-8 w-auto rounded">
-                    <span class="logo-text text-xl font-extrabold truncate text-indigo-600">Admin Panel</span>
+                    {{-- <img src="{{ asset('admin.avif') }}" alt="Logo" class="h-8 w-auto rounded"> --}}
+                    <span class="logo-text ps-3 text-xl font-extrabold truncate text-indigo-600">Admin Panel</span>
                 </a>
                 <button id="sidebar-close" class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100 transition-base">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -118,7 +118,17 @@
                     </svg>
                     <span class="sidebar-label">Dashboard</span>
                 </a>
+                <a href="{{ route('admin.users.index') }}"
+                    class="flex items-center gap-3 px-3 py-2 rounded-md transition-base {{ request()->routeIs('users.*') ? 'bg-indigo-100 font-semibold text-indigo-700' : 'hover:bg-gray-100' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                        class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15 8.25a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM4.5 18.75a6.75 6.75 0 0 1 13.5 0V20H5.25v-1.25Z" />
+                    </svg>
+                    <span class="sidebar-label">Users</span>
+                </a>
         
+               
                 <a href="{{ route('articles.index') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-md transition-base {{ request()->routeIs('articles.*') ? 'bg-indigo-100 font-semibold text-indigo-700' : 'hover:bg-gray-100' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -137,6 +147,15 @@
                             d="M4.5 4.5h6v6h-6v-6zM13.5 4.5h6v6h-6v-6zM4.5 13.5h6v6h-6v-6zM13.5 13.5h6v6h-6v-6z" />
                     </svg>
                     <span class="sidebar-label">Categories</span>
+                </a>
+                 <a href="{{ route('admin.excel.index') }}"
+                    class="flex items-center gap-3 px-3 py-2 rounded-md transition-base {{ request()->routeIs('categories.*') ? 'bg-indigo-100 font-semibold text-indigo-700' : 'hover:bg-gray-100' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="nav-icon w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4.5 4.5h6v6h-6v-6zM13.5 4.5h6v6h-6v-6zM4.5 13.5h6v6h-6v-6zM13.5 13.5h6v6h-6v-6z" />
+                    </svg>
+                    <span class="sidebar-label">Excel</span>
                 </a>
         
                 <!-- Logout -->

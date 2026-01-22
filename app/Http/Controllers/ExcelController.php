@@ -17,13 +17,11 @@ class ExcelController extends Controller
 {
     public function index()
     {
+        $client = Client::orderBy('id')->paginate(10);
+        $owner = Owner::orderBy('id')->paginate(10);
+        $admin = Admin::orderBy('id')->paginate(10);
 
-        $records = collect()
-            ->merge(Client::all())
-            ->merge(Owner::all())
-            ->merge(Admin::all());
-
-        return view("excel.index", compact('records'));
+        return view("admin.excel.index", compact('client' , 'owner', 'admin'));
     }
     public function import(Request $request, ExcelImportService $service)
     {
