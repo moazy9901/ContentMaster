@@ -20,16 +20,15 @@ class ExcelController extends Controller
         $client = Client::orderBy('id')->paginate(10);
         $owner = Owner::orderBy('id')->paginate(10);
         $admin = Admin::orderBy('id')->paginate(10);
-
         return view("admin.excel.index", compact('client' , 'owner', 'admin'));
     }
+
     public function import(Request $request, ExcelImportService $service)
     {
         $request->validate([
             'file' => 'required|mimes:xlsx,xls'
         ]);
         $service->import($request->file('file'));
-
         return back()->with('success', 'Excel Imported Successfully');
     }
 

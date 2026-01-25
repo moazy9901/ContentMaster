@@ -13,30 +13,22 @@ use Illuminate\Support\Facades\Gate;
 
 class ArticleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $articles = Article::with('category')->latest()->paginate(6);
+        $articles = Article::with('category')->latest()->paginate(20);
         return view('articles.index', compact('articles'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         Gate::authorize('create' , Article::class);
-        $categories = Category::all();
+        $categories = Category::pluck('name', 'id');
         return view('articles.create', compact('categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(articleRequest $request , ImageService $imageService)
     {
+        try{
         $validData = $request->validated();
         if($request->hasFile('image')){
             $validData['image'] = $imageService->upload($request->image , 'articals');
@@ -44,32 +36,27 @@ class ArticleController extends Controller
         $validData['user_id']=Auth::id();
         Article::create($validData);
         return redirect()->route('articles.index')->with('success', 'Article created successfully');
+        }catch(\Exception $ex){
+            return redirect()->back()->with('failed', 'Article created Failed')->withInput();
+        }
 
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Article $article)
     {
         return view('articles.show', compact('article'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Article $article)
     {
         Gate::authorize('update', $article);
-        $categories = Category::all();
+        $categories = Category::pluck('name', 'id');
         return view('articles.edit', compact('article', 'categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(ArticleRequest $request, Article $article, ImageService $imageService)
     {
+        try{
         Gate::authorize('update', $article);
         $data = $request->validated();
         if ($request->hasFile('image')) {
@@ -79,11 +66,11 @@ class ArticleController extends Controller
         $validData['user_id'] = Auth::id();
         $article->update($data);
         return redirect()->route('articles.show' , compact('article'))->with('success', 'Article updated successfully');
+        }catch(\Exception $ex){
+            return redirect()->back()->with('failed', 'Article created Failed')->withInput();
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Article $article, ImageService $imageService)
     {
         Gate::authorize('delete', $article);
@@ -91,6 +78,7 @@ class ArticleController extends Controller
         $article->delete();
         return redirect()->route('articles.index')->with('success', 'Article deleted successfully');
     }
+
     public function validateSlug(Request $request)
     {
         return SlugValidationService::validate($request, Article::class);
