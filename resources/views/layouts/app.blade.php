@@ -17,6 +17,7 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 
 <body class="font-sans antialiased bg-gray-100">
@@ -38,29 +39,8 @@
         </main>
     </div>
 
-    <!-- Toastify JS -->
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    @include('includes.toastify')
 
-    @if(session('success'))
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                Toastify({
-                    text: @json(session('success')),
-                    duration: 4000,
-                    close: true,
-                    gravity: "top",
-                    position: "{{ app()->getLocale() === 'ar' ? 'left' : 'right' }}",
-                    stopOnFocus: true,
-                    style: {
-                        background: "#16a34a",
-                        borderRadius: "8px",
-                        fontSize: "14px",
-                    },
-                    offset: { x: 20, y: 20 },
-                }).showToast();
-            });
-        </script>
-    @endif
 
     <!-- Mobile Menu -->
     <script>

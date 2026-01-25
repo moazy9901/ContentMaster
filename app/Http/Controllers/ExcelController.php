@@ -20,27 +20,41 @@ class ExcelController extends Controller
         $client = Client::orderBy('id')->paginate(10);
         $owner = Owner::orderBy('id')->paginate(10);
         $admin = Admin::orderBy('id')->paginate(10);
-        return view("admin.excel.index", compact('client' , 'owner', 'admin'));
+        return view("admin.excel.index", compact('client', 'owner', 'admin'));
     }
 
     public function import(Request $request, ExcelImportService $service)
     {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls'
-        ]);
-        $service->import($request->file('file'));
-        return back()->with('success', 'Excel Imported Successfully');
+        try {
+            $request->validate([
+                'file' => 'required|mimes:xlsx,xls'
+            ]);
+            $service->import($request->file('file'));
+            return back()->with('success', 'Excel Imported Successfully');
+        } catch (\Exception $ex) {
+            return back()->with('Failed', 'Excel Imported Failed');
+        }
     }
 
     public function export()
     {
+        if (Admin::count() === 0 && Owner::count() === 0 && Client::count() === 0) {
+            return back()->with('error', 'No data available to export.');
+        }
         $fileName = 'all_data_' . time() . '.xlsx';
         return Excel::download(new MultiSheetExport(), $fileName);
     }
 
     public function exportPdfMpdf(PdfExportService $service)
     {
-        $service->export();
-        return back()->with('success', 'data Exported Successfully');
+        if (Admin::count() === 0 && Owner::count() === 0 && Client::count() === 0) {
+            return back()->with('error', 'No data available to export.');
+        }
+        try {
+            $service->export();
+            return back()->with('success', 'Data exported successfully!');
+        } catch (\Throwable $ex) {
+            return back()->with('error', 'Failed to export PDF. Please try again.');
+        }
     }
 }

@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <title>@yield('title') - {{ config('app.name') }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
         .transition-base {
             transition: all .15s ease-in-out;
@@ -88,8 +89,8 @@
 </head>
 
 <body class="min-h-screen bg-gray-50 text-gray-900">
+    @include('includes.toastify')
     <div class="min-h-screen flex">
-
         <!-- Sidebar -->
         <aside id="sidebar"
             class="sidebar fixed min-h-screen inset-y-0 left-0 z-40 w-64 md:translate-x-0 bg-white border-r border-gray-200 flex flex-col transition-transform duration-150 ease-in-out shadow-lg rounded-r-xl overflow-hidden">

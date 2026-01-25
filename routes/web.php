@@ -24,4 +24,6 @@ Route::post('/articles/validate-slug', [ArticleController::class, 'validateSlug'
 Route::post('/categories/validate-slug', [CategoryController::class, 'validateSlug'])->name('categories.validateSlug');
 
 require __DIR__.'/auth.php';
+require __DIR__.'/lang.php';
+require __DIR__.'/admin.php';
 
