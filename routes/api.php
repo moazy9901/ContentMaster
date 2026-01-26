@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\CustomerAuthController;
 use App\Http\Controllers\Api\CustomerProfileController;
+use App\Http\Controllers\Api\StudentAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,4 +19,13 @@ Route::prefix('customer')->group(function () {
         Route::put('profile', [CustomerProfileController::class, 'update']);
         Route::post('profile/image', [CustomerProfileController::class, 'changeImage']);
     });
+});
+
+Route::prefix('student')->controller(StudentAuthController::class)->group(function () {
+    Route::post('register', 'register');
+    Route::post('login', 'login');
+
+    Route::get('me', 'me');
+    Route::post('logout', 'logout');
+    Route::post('refresh', 'refresh');
 });
