@@ -56,11 +56,6 @@ class StudentAuthController extends Controller implements HasMiddleware
         return $this->success($student , $token , 'Login successful');
     }
 
-    public function me()
-    {
-        $student = auth('api')->user();
-        return $this->success($student,null,'Authenticated student');
-    }
 
     public function logout()
     {
