@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\CustomerAuthController;
 use App\Http\Controllers\Api\CustomerProfileController;
+use App\Http\Controllers\Api\StudentAddressController;
 use App\Http\Controllers\Api\StudentAuthController;
 use App\Http\Controllers\Api\StudentProfileController;
 use Illuminate\Http\Request;
@@ -29,9 +30,18 @@ Route::prefix('student')->controller(StudentAuthController::class)->group(functi
     Route::post('refresh', 'refresh');
 });
 
-Route::middleware('auth:api')->prefix('student/profile')->group(function () {
-    Route::get('/', [StudentProfileController::class, 'me']);
-    Route::put('/update', [StudentProfileController::class, 'update']);
-    Route::post('/image', [StudentProfileController::class, 'updateImg']);
+Route::middleware('auth:api')->prefix('student/profile')->controller(StudentProfileController::class)->group(function () {
+    Route::get('/','me');
+    Route::put('/update','update');
+    Route::post('/image', 'updateImage');
 });
+
+Route::prefix('student')->middleware('auth:api')->group(function () {
+    Route::get('addresses', [StudentAddressController::class, 'index']);
+    Route::post('addresses', [StudentAddressController::class, 'store']);
+    Route::put('addresses/{address}', [StudentAddressController::class, 'update']);
+    Route::patch('addresses/{address}/default', [StudentAddressController::class, 'setDefault']);
+    Route::delete('addresses/{address}', [StudentAddressController::class, 'destroy']);
+});
+
 

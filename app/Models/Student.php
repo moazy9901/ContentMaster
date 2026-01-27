@@ -23,6 +23,11 @@ class Student extends Authenticatable implements JWTSubject
         'password'
     ];
 
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();

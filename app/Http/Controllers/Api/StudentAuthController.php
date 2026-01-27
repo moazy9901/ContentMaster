@@ -56,7 +56,6 @@ class StudentAuthController extends Controller implements HasMiddleware
         return $this->success($student , $token , 'Login successful');
     }
 
-
     public function logout()
     {
         JWTAuth::invalidate(JWTAuth::getToken());

@@ -44,7 +44,7 @@ class StudentProfileController extends Controller implements HasMiddleware
         }
     }
 
-    public function updateImg(UpdateStudentImageRequest $request)
+    public function updateIamge(UpdateStudentImageRequest $request)
     {
         $student = JWTAuth::user();
         DB::beginTransaction();
