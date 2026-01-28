@@ -6,25 +6,28 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class UsersController extends Controller
+class UsersController extends Controller implements HasMiddleware
 {
-    // Show all users
-    public function index(): View
+    public static function middleware(): array
+    {
+        return [new Middleware(['auth:web', 'admin']),];
+    }
+    
+    public function index()
     {
         $users = User::orderBy('id', 'asc')->paginate(5);
         return view('admin.users.index', compact('users'));
     }
-    // Show create form
-    public function create(): View
+    public function create()
     {
         return view('admin.users.create');
     }
 
-    // Store new user
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -45,13 +48,11 @@ class UsersController extends Controller
             ->with('success', 'User created successfully');
     }
 
-    // Show edit form
-    public function edit(User $user): View
+    public function edit(User $user)
     {
         return view('admin.users.edit', compact('user'));
     }
 
-    // Update user
     public function update(Request $request, User $user): RedirectResponse
     {
         $request->validate([
@@ -72,7 +73,6 @@ class UsersController extends Controller
             ->with('success', 'User updated successfully');
     }
 
-    // Delete user
     public function destroy(User $user): RedirectResponse
     {
         $user->delete();

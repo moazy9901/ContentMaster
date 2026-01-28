@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginStudentRequest;
-use App\Http\Requests\RegisterStudentRequest;
+use App\Http\Requests\StoreStudentRequest;
 use App\Models\Student;
 use App\Services\ImageService;
 use App\Traits\ApiResponse;
@@ -22,7 +22,7 @@ class StudentAuthController extends Controller implements HasMiddleware
     {
         return [new Middleware('auth:api', except: ['login', 'register']),];
     }
-    public function register(RegisterStudentRequest $request)
+    public function register(StoreStudentRequest $request)
     {
         try {
             DB::beginTransaction();

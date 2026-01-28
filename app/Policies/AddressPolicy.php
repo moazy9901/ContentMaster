@@ -4,17 +4,26 @@ namespace App\Policies;
 
 use App\Models\Address;
 use App\Models\Student;
-use Illuminate\Auth\Access\Response;
+use App\Models\User;
 
 class AddressPolicy
 {
-    public function update(Student $student, Address $address): bool
+    public function update($actor, Address $address)
     {
-         return $address->student_id === $student->id;
+        return $this->canManageAddress($actor, $address);
     }
 
-    public function delete(Student $student, Address $address): bool
+    public function delete($actor, Address $address)
     {
-        return $address->student_id === $student->id;
+        return $this->canManageAddress($actor, $address);
+    }
+
+    private function canManageAddress($actor, Address $address)
+    {
+        if ($actor instanceof Student)
+            return $address->student_id === $actor->id;
+        if ($actor instanceof User)
+            return in_array($actor->role, ['admin', 'super_admin']);
+        return false;
     }
 }
