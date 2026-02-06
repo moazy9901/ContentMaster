@@ -55,13 +55,13 @@
             </div>
         </div>
 
-        <!-- students Card -->
+        <!-- customers Card -->
         <div
             class="bg-white rounded-xl shadow-md border-l-4 border-orange-500 p-6 hover:shadow-lg transition-shadow duration-200">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-500 uppercase tracking-wide">students</p>
-                    <p class="text-3xl font-bold text-gray-800">{{ $studentsCount }}</p>
+                    <p class="text-sm text-gray-500 uppercase tracking-wide">customers</p>
+                    <p class="text-3xl font-bold text-gray-800">{{ $customersCount }}</p>
                 </div>
                 <div
                     class="bg-orange-100 text-orange-600 p-3 rounded-full flex items-center justify-center shadow-sm text-lg">

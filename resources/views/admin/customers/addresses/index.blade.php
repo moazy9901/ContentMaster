@@ -1,11 +1,11 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Addresses for ' . $student->name)
+@section('title', 'Addresses for ' . $customer->name)
 
 @section('content')
 <div class="flex justify-between items-center mb-4">
-    <h2 class="text-lg font-semibold text-slate-800">Addresses for {{ $student->name }}</h2>
-    <a href="{{ route('admin.students.addresses.create', $student) }}"
+    <h2 class="text-lg font-semibold text-slate-800">Addresses for {{ $customer->name }}</h2>
+    <a href="{{ route('admin.customers.addresses.create', $customer) }}"
        class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition">
         Add Address
     </a>
@@ -35,7 +35,7 @@
                 <td class="px-3 py-2 truncate">{{ $address->city }}</td>
                 <td class="px-3 py-2 truncate">{{ $address->governorate }}</td>
                 <td class="px-3 py-2">
-    <form action="{{ route('admin.students.addresses.default', [$student, $address]) }}" method="POST">
+    <form action="{{ route('admin.customers.addresses.default', [$customer, $address]) }}" method="POST">
         @csrf
         @method('PUT')
         <button type="submit"
@@ -47,10 +47,10 @@
 </td>
 
                 <td class="px-3 py-2 space-x-1">
-                    <a href="{{ route('admin.students.addresses.edit', [$student, $address]) }}"
+                    <a href="{{ route('admin.customers.addresses.edit', [$customer, $address]) }}"
                        class="px-2 py-1 text-orange-500 text-xs rounded transition">Edit</a>
 
-                    <form action="{{ route('admin.students.addresses.destroy', [$student, $address]) }}" method="POST" class="inline-block"
+                    <form action="{{ route('admin.customers.addresses.destroy', [$customer, $address]) }}" method="POST" class="inline-block"
                           onsubmit="return confirm('Are you sure you want to delete this address?');">
                         @csrf
                         @method('DELETE')

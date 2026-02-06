@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAddressRequest;
 use App\Http\Requests\UpdateAddressRequest;
-use App\Models\Student;
+use App\Models\Customer;
 use App\Models\Address;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -18,71 +18,71 @@ class AddressController extends Controller implements HasMiddleware
     {
         return [new Middleware(['auth:web', 'admin']),];
     }
-    public function index(Student $student)
+    public function index(Customer $customer)
     {
-        $addresses = $student->addresses()->latest()->paginate(10);
-        return view('admin.students.addresses.index', compact('student', 'addresses'));
+        $addresses = $customer->addresses()->latest()->paginate(10);
+        return view('admin.customers.addresses.index', compact('customer', 'addresses'));
     }
 
-    public function create(Student $student)
+    public function create(Customer $customer)
     {
-        return view('admin.students.addresses.create', compact('student'));
+        return view('admin.customers.addresses.create', compact('customer'));
     }
 
-    public function store(StoreAddressRequest $request, Student $student)
+    public function store(StoreAddressRequest $request, Customer $customer)
     {
         try {
             DB::beginTransaction();
             $data = $request->validated();
             if ($request->flag) {
-                $student->addresses()->update(['flag' => false]);
+                $customer->addresses()->update(['flag' => false]);
             }
-            $student->addresses()->create($data);
+            $customer->addresses()->create($data);
             DB::commit();
-            return redirect()->route('admin.students.addresses.index', $student)
-                         ->with('success', 'Address added successfully.');
+            return redirect()->route('admin.customers.addresses.index', $customer)
+                ->with('success', 'Address added successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
-                         ->with('error', 'Address added Failed.');
+                ->with('error', 'Address added Failed.');
         }
     }
 
-    public function edit(Student $student, Address $address)
+    public function edit(Customer $customer, Address $address)
     {
-        return view('admin.students.addresses.edit', compact('student', 'address'));
+        return view('admin.customers.addresses.edit', compact('customer', 'address'));
     }
 
-    public function update(UpdateAddressRequest $request, Student $student, Address $address)
+    public function update(UpdateAddressRequest $request, Customer $customer, Address $address)
     {
         Gate::authorize('update', $address);
         try {
             DB::beginTransaction();
             if ($request->flag) {
-                $address->student->addresses()->update(['flag' => false]);
+                $address->customer->addresses()->update(['flag' => false]);
             }
             $address->update($request->validated());
             DB::commit();
-              return redirect()->route('admin.students.addresses.index', $student)
-                         ->with('success', 'Address updated successfully.');
+            return redirect()->route('admin.customers.addresses.index', $customer)
+                ->with('success', 'Address updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-              return redirect()->back()->with('success', 'Address updated Failed.');
+            return redirect()->back()->with('success', 'Address updated Failed.');
         }
     }
 
-    public function destroy(Student $student, Address $address)
+    public function destroy(Customer $customer, Address $address)
     {
         $address->delete();
-        return redirect()->route('admin.students.addresses.index', $student)
-                         ->with('success', 'Address deleted successfully.');
+        return redirect()->route('admin.customers.addresses.index', $customer)
+            ->with('success', 'Address deleted successfully.');
     }
 
-    public function setDefaultAddress(Student $student, Address $address)
+    public function setDefaultAddress(Customer $customer, Address $address)
     {
-        $student->addresses()->update(['flag' => false]);
+        $customer->addresses()->update(['flag' => false]);
         $address->update(['flag' => true]);
-        return redirect()->route('admin.students.addresses.index', $student)
-                         ->with('success', 'Default address updated successfully.');
+        return redirect()->route('admin.customers.addresses.index', $customer)
+            ->with('success', 'Default address updated successfully.');
     }
 }

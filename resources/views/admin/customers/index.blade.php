@@ -1,13 +1,13 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Students Management')
+@section('title', 'Customers Management')
 
 @section('content')
 <div class="flex justify-between items-center mb-4">
-    <h2 class="text-lg font-semibold text-slate-800">Students</h2>
-    <a href="{{ route('admin.students.create') }}"
+    <h2 class="text-lg font-semibold text-slate-800">Customers</h2>
+    <a href="{{ route('admin.customers.create') }}"
        class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition">
-        Create Student
+        Create Customer
     </a>
 </div>
 
@@ -25,35 +25,35 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($students as $student)
+            @forelse($customers as $customer)
             <tr class="border-b hover:bg-gray-50">
-                <td class="px-3 py-2 truncate">{{ $student->id }}</td>
-                <td class="px-3 py-2 truncate">{{ $student->name }}</td>
-                <td class="px-3 py-2 truncate">{{ $student->email }}</td>
-                <td class="px-3 py-2 truncate">{{ $student->phone ?? '-' }}</td>
-                <td class="px-3 py-2 capitalize">{{ $student->gender ?? '-' }}</td>
+                <td class="px-3 py-2 truncate">{{ $customer->id }}</td>
+                <td class="px-3 py-2 truncate">{{ $customer->name }}</td>
+                <td class="px-3 py-2 truncate">{{ $customer->email }}</td>
+                <td class="px-3 py-2 truncate">{{ $customer->phone ?? '-' }}</td>
+                <td class="px-3 py-2 capitalize">{{ $customer->gender ?? '-' }}</td>
                 <td class="px-3 py-2">
-                <a href="{{ route('admin.students.addresses.index', $student) }}"
+                <a href="{{ route('admin.customers.addresses.index', $customer) }}"
                 class="flex flex-col items-center justify-center px-3 py-2 text-blue-500 text-xs rounded border border-blue-500 hover:bg-blue-50 transition">
                     <span class="text-md font-semibold leading-none">
-                        {{ $student->addresses->count() }}
+                        {{ $customer->addresses->count() }}
                     </span>
 
                     <span class="text-[10px] uppercase tracking-wide">
-                        Address{{ $student->addresses->count() !== 1 ? 'es' : '' }}
+                        Address{{ $customer->addresses->count() !== 1 ? 'es' : '' }}
                     </span>
                 </a>
 
 </td>
 
                 <td class="px-3 py-2 space-x-1">
-                    <a href="{{ route('admin.students.edit', $student) }}"
+                    <a href="{{ route('admin.customers.edit', $customer) }}"
                        class="px-2 py-1 text-orange-500 text-xs rounded transition">
                         Edit
                     </a>
 
-                    <form action="{{ route('admin.students.destroy', $student) }}" method="POST" class="inline-block"
-                          onsubmit="return confirm('Are you sure you want to delete this student?');">
+                    <form action="{{ route('admin.customers.destroy', $customer) }}" method="POST" class="inline-block"
+                          onsubmit="return confirm('Are you sure you want to delete this customer?');">
                         @csrf
                         @method('DELETE')
                         <button class="px-2 py-1 text-red-500 text-xs rounded transition">
@@ -64,7 +64,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="7" class="px-3 py-2 text-gray-500 text-center">No students found.</td>
+                <td colspan="7" class="px-3 py-2 text-gray-500 text-center">No Customers found.</td>
             </tr>
             @endforelse
         </tbody>
@@ -72,7 +72,7 @@
 </div>
 
 <div class="mt-3">
-    {{ $students->links('pagination::simple-tailwind') }}
+    {{ $customers->links('pagination::simple-tailwind') }}
 </div>
 
 @endsection

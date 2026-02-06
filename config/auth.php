@@ -40,9 +40,9 @@ return [
             'provider' => 'users',
         ],
         'api' => [
-        'driver' => 'jwt',
-        'provider' => 'students',
-    ],
+            'driver' => 'jwt',
+            'provider' => 'customers',
+        ],
     ],
 
     /*
@@ -67,9 +67,9 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
-        'students' => [
+        'customers' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Student::class,
+            'model' => App\Models\Customer::class,
         ],
 
         // 'users' => [
@@ -104,8 +104,8 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
-        'students' => [
-            'provider' => 'students',
+        'customers' => [
+            'provider' => 'customers',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,

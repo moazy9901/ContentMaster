@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Address;
-use App\Models\Student;
+use App\Models\Customer;
 use App\Models\User;
 
 class AddressPolicy
@@ -20,8 +20,8 @@ class AddressPolicy
 
     private function canManageAddress($actor, Address $address)
     {
-        if ($actor instanceof Student)
-            return $address->student_id === $actor->id;
+        if ($actor instanceof Customer)
+            return $address->customer_id === $actor->id;
         if ($actor instanceof User)
             return in_array($actor->role, ['admin', 'super_admin']);
         return false;

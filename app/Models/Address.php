@@ -12,9 +12,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 #[UsePolicy(AddressPolicy::class)]
 class Address extends Authenticatable implements JWTSubject
 {
-    use HasFactory , Notifiable;
+    use HasFactory, Notifiable;
     protected $fillable = [
-        'student_id',
+        'customer_id',
         'name',
         'details',
         'country',
@@ -27,12 +27,12 @@ class Address extends Authenticatable implements JWTSubject
         'flag' => 'boolean',
     ];
 
-    public function student()
+    public function customer()
     {
-        return $this->belongsTo(Student::class);
+        return $this->belongsTo(Customer::class);
     }
 
-     public function getJWTIdentifier()
+    public function getJWTIdentifier()
     {
         return $this->getKey();
     }

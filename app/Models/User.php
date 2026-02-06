@@ -44,9 +44,14 @@ class User extends Authenticatable
         return $this->role === 'editor';
     }
 
-    public function isUser(): bool
+    public function isCustomer(): bool
     {
-        return $this->role === 'user';
+        return $this->role === 'customer';
+    }
+
+    public function customer()
+    {
+        return $this->hasOne(Customer::class);
     }
 
     /**

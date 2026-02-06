@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class StudentAddressController extends Controller implements HasMiddleware
+class CustomerAddressController extends Controller implements HasMiddleware
 {
     use ApiResponse;
 
@@ -24,20 +24,20 @@ class StudentAddressController extends Controller implements HasMiddleware
 
     public function index()
     {
-        $student = JWTAuth::user();
-        return $this->success($student->addresses, null, 'Addresses list');
+        $customer = JWTAuth::user();
+        return $this->success($customer->addresses, null, 'Addresses list');
     }
 
     public function store(StoreAddressRequest $request)
     {
         try {
             DB::beginTransaction();
-            $student = JWTAuth::user();
+            $customer = JWTAuth::user();
             $data = $request->validated();
             if ($request->flag) {
-                $student->addresses()->update(['flag' => false]);
+                $customer->addresses()->update(['flag' => false]);
             }
-            $address = $student->addresses()->create($data);
+            $address = $customer->addresses()->create($data);
             DB::commit();
             return $this->success($address, null, 'Address added successfully');
         } catch (\Exception $e) {
@@ -52,7 +52,7 @@ class StudentAddressController extends Controller implements HasMiddleware
         try {
             DB::beginTransaction();
             if ($request->flag) {
-                $address->student->addresses()->update(['flag' => false]);
+                $address->customer->addresses()->update(['flag' => false]);
             }
             $address->update($request->validated());
             DB::commit();
@@ -68,7 +68,7 @@ class StudentAddressController extends Controller implements HasMiddleware
         Gate::authorize('update', $address);
         try {
             DB::beginTransaction();
-            $address->student->addresses()->update(['flag' => false]);
+            $address->customer->addresses()->update(['flag' => false]);
             $address->update(['flag' => true]);
             DB::commit();
             return $this->success($address, null, 'Default address set');

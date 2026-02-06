@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Address;
 use App\Models\Article;
 use App\Models\Category;
-use App\Models\Student;
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -23,7 +23,7 @@ class DashboardController extends Controller implements HasMiddleware
             'usersCount'     => User::count(),
             'articlesCount'  => Article::count(),
             'categoriesCount' => Category::count(),
-            'studentsCount' => Student::count(),
+            'customersCount' => Customer::count(),
             'addressesCount' => Address::count(),
         ]);
     }

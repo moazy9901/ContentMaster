@@ -3,64 +3,68 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CustomerRequest;
+use App\Http\Requests\LoginCustomerRequest;
+use App\Http\Requests\StoreCustomerRequest;
 use App\Models\Customer;
 use App\Services\ImageService;
-use Illuminate\Http\Request;
+use App\Traits\ApiResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
-class CustomerAuthController extends Controller
+class CustomerAuthController extends Controller implements HasMiddleware
 {
-    public function __construct(private ImageService $imageService) {}
-    public function register(CustomerRequest $request)
+    use ApiResponse;
+    public function __construct(protected ImageService $imageService) {}
+    public static function middleware(): array
+    {
+        return [new Middleware('auth:api', except: ['login', 'register']),];
+    }
+    public function register(StoreCustomerRequest $request)
     {
         try {
+            DB::beginTransaction();
             $data = $request->validated();
-            $data['password'] = bcrypt($request->password);
+            $data['password'] = Hash::make($data['password']);
+            $uploadedImage = null;
             if ($request->hasFile('img')) {
-                $data['img'] = $this->imageService->upload($request->file('img'), 'customers');
+                $uploadedImage = $this->imageService->upload($request->file('img'), 'customers');
             }
+            $data['img'] = $uploadedImage;
             $customer = Customer::create($data);
-            $token = $customer->createToken('customer-token')->plainTextToken;
-            return response()->json([
-                'success' => true,
-                'customer' => $customer,
-                'token' => $token
-            ], 201);
-        } catch (\Exception $ex) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Registration failed. Please try again.'
-            ], 500);
-        }
-    }
-    public function login(Request $request)
-    {
-        try {
-            $request->validate([
-                'email' => 'required|email',
-                'password' => 'required'
-            ]);
-
-            $customer = Customer::where('email', $request->email)->first();
-            if (!$customer || !Hash::check($request->password, $customer->password)) {
-                return response()->json(['message' => 'Invalid credentials'], 401);
+            $token = JWTAuth::fromUser($customer);
+            DB::commit();
+            return $this->success($customer, $token, 'Registration Successfully.', 201);
+        } catch (\Throwable $e) {
+            if ($uploadedImage) {
+                $this->imageService->delete($uploadedImage);
             }
-            $token = $customer->createToken('customer-token')->plainTextToken;
-            return response()->json([
-                'customer' => $customer,
-                'token' => $token
-            ]);
-        } catch (\Exception $ex) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Login failed. Please try again.'
-            ], 500);
+            DB::rollBack();
+            return $this->error("Registration failed. Please try again.");
         }
     }
-    public function logout(Request $request)
+
+    public function login(LoginCustomerRequest $request)
     {
-        $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Logged out']);
+        $credentials = $request->only('email', 'password');
+        if (!$token = JWTAuth::attempt($credentials)) {
+            return $this->error('Invalid credentials', 401);
+        }
+        $customer = auth('api')->user();
+        return $this->success($customer, $token, 'Login successful');
+    }
+
+    public function logout()
+    {
+        JWTAuth::invalidate(JWTAuth::getToken());
+        return $this->success(null, null, 'Logged out successfully');
+    }
+
+    public function refresh()
+    {
+        $newToken = JWTAuth::refresh(JWTAuth::getToken());
+        return $this->success(null, $newToken, 'Token refreshed');
     }
 }

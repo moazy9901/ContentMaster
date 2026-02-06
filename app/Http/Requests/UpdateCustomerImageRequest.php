@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginStudentRequest extends FormRequest
+class UpdateCustomerImageRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,8 +14,7 @@ class LoginStudentRequest extends FormRequest
     public function rules(): array
     {
         return [
-           'email' => 'required|email',
-            'password' => 'required',
+            'img' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048'
         ];
     }
 }

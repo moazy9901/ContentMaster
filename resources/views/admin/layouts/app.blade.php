@@ -128,14 +128,14 @@
                     </svg>
                     <span class="sidebar-label">Users</span>
                 </a>
-                <a href="{{ route('admin.students.index') }}"
-                    class="flex items-center gap-3 px-3 py-2 rounded-md transition-base {{ request()->routeIs('students.*') ? 'bg-indigo-100 font-semibold text-indigo-700' : 'hover:bg-gray-100' }}">
+                <a href="{{ route('admin.customers.index') }}"
+                    class="flex items-center gap-3 px-3 py-2 rounded-md transition-base {{ request()->routeIs('customers.*') ? 'bg-indigo-100 font-semibold text-indigo-700' : 'hover:bg-gray-100' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                         class="w-5 h-5">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M15 8.25a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM4.5 18.75a6.75 6.75 0 0 1 13.5 0V20H5.25v-1.25Z" />
                     </svg>
-                    <span class="sidebar-label">Students</span>
+                    <span class="sidebar-label">Customers</span>
                 </a>
         
                

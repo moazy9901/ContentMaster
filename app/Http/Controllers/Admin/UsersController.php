@@ -17,7 +17,7 @@ class UsersController extends Controller implements HasMiddleware
     {
         return [new Middleware(['auth:web', 'admin']),];
     }
-    
+
     public function index()
     {
         $users = User::orderBy('id', 'asc')->paginate(5);
@@ -33,7 +33,7 @@ class UsersController extends Controller implements HasMiddleware
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role' => ['required', Rule::in(['admin', 'editor', 'user'])],
+            'role' => ['required', Rule::in(['admin', 'editor', 'customer'])],
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -58,8 +58,7 @@ class UsersController extends Controller implements HasMiddleware
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
-            'role' => ['required', Rule::in(['admin', 'editor', 'user'])],
-            'password' => 'nullable|string|min:8|confirmed',
+            'role' => ['required', Rule::in(['admin', 'editor', 'customer'])],
         ]);
 
         $user->update([
