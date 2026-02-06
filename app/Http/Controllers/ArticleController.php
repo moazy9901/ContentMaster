@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Gate;
 
 class ArticleController extends Controller
 {
+    public function __construct(protected ImageService $imageService) {}
     public function index()
     {
         $articles = Article::with('category')->latest()->paginate(20);
@@ -22,16 +23,16 @@ class ArticleController extends Controller
     public function create()
     {
         Gate::authorize('create' , Article::class);
-        $categories = Category::pluck('name', 'id');
+        $categories = Category::select('name', 'id')->get();
         return view('articles.create', compact('categories'));
     }
 
-    public function store(articleRequest $request , ImageService $imageService)
+    public function store(articleRequest $request)
     {
         try{
         $validData = $request->validated();
         if($request->hasFile('image')){
-            $validData['image'] = $imageService->upload($request->image , 'articals');
+            $validData['image'] = $this->imageService->upload($request->image , 'articles');
         }
         $validData['user_id']=Auth::id();
         Article::create($validData);
@@ -50,20 +51,20 @@ class ArticleController extends Controller
     public function edit(Article $article)
     {
         Gate::authorize('update', $article);
-        $categories = Category::pluck('name', 'id');
+        $categories = Category::select('name', 'id')->get();
         return view('articles.edit', compact('article', 'categories'));
     }
 
-    public function update(ArticleRequest $request, Article $article, ImageService $imageService)
+    public function update(ArticleRequest $request, Article $article)
     {
         try{
         Gate::authorize('update', $article);
         $data = $request->validated();
         if ($request->hasFile('image')) {
-            $imageService->delete($article->image);
-            $data['image'] = $imageService->upload($request->image, 'articles');
+            $this->imageService->delete($article->image);
+            $data['image'] = $this->imageService->upload($request->image, 'articles');
         }
-        $validData['user_id'] = Auth::id();
+        $data['user_id'] = Auth::id();
         $article->update($data);
         return redirect()->route('articles.show' , compact('article'))->with('success', 'Article updated successfully');
         }catch(\Exception $ex){
@@ -71,10 +72,10 @@ class ArticleController extends Controller
         }
     }
 
-    public function destroy(Article $article, ImageService $imageService)
+    public function destroy(Article $article)
     {
         Gate::authorize('delete', $article);
-        $imageService->delete($article->image);
+        $this->imageService->delete($article->image);
         $article->delete();
         return redirect()->route('articles.index')->with('success', 'Article deleted successfully');
     }

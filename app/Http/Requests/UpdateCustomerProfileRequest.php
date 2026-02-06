@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateCustomerProfileRequest extends FormRequest
 {
@@ -17,12 +18,8 @@ class UpdateCustomerProfileRequest extends FormRequest
 
         return [
             'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:customers,email,' . $customerId,
-            'phone' => [
-                'sometimes',
-                'regex:/^01[0-9]{9}$/',
-                'unique:customers,phone,' . $customerId
-            ],
+            'email' => ['sometimes', 'email', Rule::unique('customers', 'email')->ignore($this->customer->id)],
+            'phone' => ['sometimes', Rule::unique('customers', 'phone')->ignore($this->customer->id), 'regex:/^01[0125][0-9]{8}$/'],
             'password' => 'sometimes|min:6',
             'gender' => 'nullable|in:male,female',
         ];

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginCustomerRequest;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Models\Customer;
+use App\Services\CustomerService;
 use App\Services\ImageService;
 use App\Traits\ApiResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -22,28 +23,11 @@ class CustomerAuthController extends Controller implements HasMiddleware
     {
         return [new Middleware('auth:api', except: ['login', 'register']),];
     }
-    public function register(StoreCustomerRequest $request)
+    public function register(StoreCustomerRequest $request, CustomerService $customerService)
     {
-        try {
-            DB::beginTransaction();
-            $data = $request->validated();
-            $data['password'] = Hash::make($data['password']);
-            $uploadedImage = null;
-            if ($request->hasFile('img')) {
-                $uploadedImage = $this->imageService->upload($request->file('img'), 'customers');
-            }
-            $data['img'] = $uploadedImage;
-            $customer = Customer::create($data);
-            $token = JWTAuth::fromUser($customer);
-            DB::commit();
-            return $this->success($customer, $token, 'Registration Successfully.', 201);
-        } catch (\Throwable $e) {
-            if ($uploadedImage) {
-                $this->imageService->delete($uploadedImage);
-            }
-            DB::rollBack();
-            return $this->error("Registration failed. Please try again.");
-        }
+        $customer = $customerService->store($request->validated());
+        $token = JWTAuth::fromUser($customer);
+        return $this->success($customer, $token, 'Registration Successfully.', 201);
     }
 
     public function login(LoginCustomerRequest $request)

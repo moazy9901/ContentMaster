@@ -139,7 +139,7 @@
                 </a>
         
                
-                <a href="{{ route('articles.index') }}"
+                <a href="{{ route('admin.articles.index') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-md transition-base {{ request()->routeIs('articles.*') ? 'bg-indigo-100 font-semibold text-indigo-700' : 'hover:bg-gray-100' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="nav-icon w-5 h-5">
@@ -149,7 +149,7 @@
                     <span class="sidebar-label">Articles</span>
                 </a>
         
-                <a href="{{ route('categories.index') }}"
+                <a href="{{ route('admin.categories.index') }}"
                     class="flex items-center gap-3 px-3 py-2 rounded-md transition-base {{ request()->routeIs('categories.*') ? 'bg-indigo-100 font-semibold text-indigo-700' : 'hover:bg-gray-100' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="nav-icon w-5 h-5">

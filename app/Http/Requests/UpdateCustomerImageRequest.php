@@ -14,7 +14,7 @@ class UpdateCustomerImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'img' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048'
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048'
         ];
     }
 }
