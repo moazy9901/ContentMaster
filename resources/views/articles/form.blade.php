@@ -93,35 +93,6 @@
     </form>
 </div>
 
-<script>
-    const slugInput = document.getElementById('slug');
-    const slugMessage = document.getElementById('slug-message');
-
-    slugInput?.addEventListener('input', async () => {
-        const slug = slugInput.value;
-
-        if (!slug) {
-            slugMessage.textContent = '';
-            return;
-        }
-
-        try {
-            const response = await fetch("{{ route('articles.validateSlug') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                body: JSON.stringify({ slug })
-            });
-
-            const data = await response.json();
-            slugMessage.textContent = data.message;
-            slugMessage.className = data.valid ? 'text-green-600 text-sm mt-1' : 'text-red-600 text-sm mt-1';
-        } catch (err) {
-            console.error(err);
-            slugMessage.textContent = 'Error validating slug.';
-            slugMessage.className = 'text-red-600 text-sm mt-1';
-        }
-    });
-</script>
+<x-slug-validation-script
+    route="{{ route('articles.validateSlug') }}"
+/>

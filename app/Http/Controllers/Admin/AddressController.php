@@ -7,6 +7,7 @@ use App\Http\Requests\StoreAddressRequest;
 use App\Http\Requests\UpdateAddressRequest;
 use App\Models\Customer;
 use App\Models\Address;
+use App\Services\AddressService;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,7 @@ class AddressController extends Controller implements HasMiddleware
     {
         return [new Middleware(['auth:web', 'admin']),];
     }
+    public function __construct(protected AddressService $addressService) {}
     public function index(Customer $customer)
     {
         $addresses = $customer->addresses()->latest()->paginate(10);
@@ -32,13 +34,7 @@ class AddressController extends Controller implements HasMiddleware
     public function store(StoreAddressRequest $request, Customer $customer)
     {
         try {
-            DB::beginTransaction();
-            $data = $request->validated();
-            if ($request->flag) {
-                $customer->addresses()->update(['flag' => false]);
-            }
-            $customer->addresses()->create($data);
-            DB::commit();
+            $this->addressService->createAddress($customer, $request->validated());
             return redirect()->route('admin.customers.addresses.index', $customer)
                 ->with('success', 'Address added successfully.');
         } catch (\Exception $e) {
@@ -57,32 +53,38 @@ class AddressController extends Controller implements HasMiddleware
     {
         Gate::authorize('update', $address);
         try {
-            DB::beginTransaction();
-            if ($request->flag) {
-                $address->customer->addresses()->update(['flag' => false]);
-            }
-            $address->update($request->validated());
-            DB::commit();
+            $this->addressService->updateAddress($address, $request->validated());
             return redirect()->route('admin.customers.addresses.index', $customer)
                 ->with('success', 'Address updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('success', 'Address updated Failed.');
+            return redirect()->back()->with('error', 'Address updated Failed.');
         }
     }
 
     public function destroy(Customer $customer, Address $address)
     {
-        $address->delete();
-        return redirect()->route('admin.customers.addresses.index', $customer)
-            ->with('success', 'Address deleted successfully.');
+        Gate::authorize('delete', $address);
+        try {
+            $this->addressService->deleteAddress($address);
+            return redirect()->route('admin.customers.addresses.index', $customer)
+                ->with('success', 'Address deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Address deleted Failed.');
+        }
     }
 
     public function setDefaultAddress(Customer $customer, Address $address)
     {
-        $customer->addresses()->update(['flag' => false]);
-        $address->update(['flag' => true]);
+        Gate::authorize('update', $address);
+        try {
+            $this->addressService->setDefault($customer, $address);
         return redirect()->route('admin.customers.addresses.index', $customer)
             ->with('success', 'Default address updated successfully.');
+             } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Default address updated Failed.');
+    }
     }
 }

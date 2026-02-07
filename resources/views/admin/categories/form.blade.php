@@ -12,7 +12,14 @@
             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
         @enderror
     </div>
-
+     <!-- Slug -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">{{ __('site.Slug') }} *</label>
+            <input type="text" name="slug" id="slug" value="{{ old('slug', $category->slug ?? '') }}"
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+            <p id="slug-message" class="text-sm mt-1 text-gray-500">{{ __('site.format') }}</p>
+            @error('slug') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
+        </div>
     <!-- Image -->
     <div>
         <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Image</label>
@@ -74,3 +81,8 @@
     </div>
 
 </div>
+
+<x-slug-validation-script
+    route="{{ route('categories.validateSlug') }}"
+/>
+

@@ -62,10 +62,12 @@ class CustomerService
         try {
             DB::beginTransaction();
             $newImage = $this->imageService->upload($image, 'customers');
+            if(!empty($data['image'])){
             if ($customer->image) {
                 $this->imageService->delete($customer->image);
             }
             $customer->update(['image' => $newImage]);
+            }
             DB::commit();
             return $customer;
         } catch (Throwable $e) {

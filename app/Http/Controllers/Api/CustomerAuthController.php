@@ -33,7 +33,7 @@ class CustomerAuthController extends Controller implements HasMiddleware
     public function login(LoginCustomerRequest $request)
     {
         $credentials = $request->only('email', 'password');
-        if (!$token = JWTAuth::attempt($credentials)) {
+        if (!$token = auth()->guard('api')->attempt($credentials)) {
             return $this->error('Invalid credentials', 401);
         }
         $customer = auth('api')->user();

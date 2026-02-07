@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\categoryRequest;
 use App\Models\Category;
+use App\Services\CategoryService;
 use App\Services\ImageService;
 use App\Services\SlugValidationService;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
 {
+    public function __construct(protected CategoryService $categoryService) {}
     public function index()
     {
         $categories = Category::latest()->paginate(20);
@@ -20,25 +22,16 @@ class CategoryController extends Controller
 
     public function create()
     {
-        Gate::authorize('update', Category::class);
+        Gate::authorize('create', Category::class);
         return view('categories.create');
     }
 
     public function store(categoryRequest $request)
     {
-        try {
-            $data = $request->validated();
-            if ($request->hasFile('image')) {
-                $data['image'] = ImageService::upload($request->file('image'), 'categories');
-            }
-            $validData['user_id'] = Auth::id();
-            Category::create($data);
-            return redirect()->route('categories.index')
-                ->with('success', 'Category created successfully!');
-        } catch (\Exception $ex) {
-            report($ex); // ask eng abd elkreem
-            return redirect()->back()->with('failed', 'Category created Failed')->withInput();
-        }
+        Gate::authorize('create' , Category::class);
+        $this->categoryService->store($request->validated());
+        return redirect()->route('categories.index')->with('success', 'Category created successfully!');
+       
     }
 
     public function show(Category $category)
@@ -49,32 +42,21 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        Gate::authorize('update', $category);
+        Gate::authorize('update', Category::class);
         return view('categories.edit', compact('category'));
     }
 
     public function update(CategoryRequest $request, Category $category)
     {
-        try {
-            Gate::authorize('update', $category);
-            $data = $request->validated();
-            if ($request->hasFile('image')) {
-                ImageService::delete($category->image);
-                $data['image'] = ImageService::upload($request->file('image'), 'categories');
-            }
-            $validData['user_id'] = Auth::id();
-            $category->update($data);
-            return redirect()->route('categories.show', compact('category'))
-                ->with('success', 'Category updated successfully!');
-        } catch (\Exception $ex) {
-            return redirect()->back()->with('Failed', 'Category updateded Failed')->withInput();
-        }
+        Gate::authorize('update' , Category::class);
+        $this->categoryService->update($category , $request->validated());
+        return redirect()->route('categories.show', compact('category'))->with('success', 'Category updated successfully!');
     }
 
     public function destroy(Category $category)
     {
         Gate::authorize('delete', $category);
-        $category->delete();
+        $this->categoryService->destroy($category);
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully!');
     }
 

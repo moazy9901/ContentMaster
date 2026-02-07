@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAddressRequest;
 use App\Http\Requests\UpdateAddressRequest;
 use App\Models\Address;
+use App\Services\AddressService;
 use App\Traits\ApiResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\JWT;
 
 class CustomerAddressController extends Controller implements HasMiddleware
 {
@@ -21,7 +23,7 @@ class CustomerAddressController extends Controller implements HasMiddleware
     {
         return [new Middleware('auth:api')];
     }
-
+    public function __construct(protected AddressService $addressService) {}
     public function index()
     {
         $customer = JWTAuth::user();
@@ -31,14 +33,8 @@ class CustomerAddressController extends Controller implements HasMiddleware
     public function store(StoreAddressRequest $request)
     {
         try {
-            DB::beginTransaction();
             $customer = JWTAuth::user();
-            $data = $request->validated();
-            if ($request->flag) {
-                $customer->addresses()->update(['flag' => false]);
-            }
-            $address = $customer->addresses()->create($data);
-            DB::commit();
+            $address = $this->addressService->createAddress($customer, $request->validated());
             return $this->success($address, null, 'Address added successfully');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -50,12 +46,7 @@ class CustomerAddressController extends Controller implements HasMiddleware
     {
         Gate::authorize('update', $address);
         try {
-            DB::beginTransaction();
-            if ($request->flag) {
-                $address->customer->addresses()->update(['flag' => false]);
-            }
-            $address->update($request->validated());
-            DB::commit();
+            $address = $this->addressService->updateAddress($address, $request->validated());
             return $this->success($address, null, 'Address updated successfully');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -67,10 +58,8 @@ class CustomerAddressController extends Controller implements HasMiddleware
     {
         Gate::authorize('update', $address);
         try {
-            DB::beginTransaction();
-            $address->customer->addresses()->update(['flag' => false]);
-            $address->update(['flag' => true]);
-            DB::commit();
+           $customer = JWTAuth::user();
+           $this->addressService->setDefault($customer, $address);
             return $this->success($address, null, 'Default address set');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -82,7 +71,7 @@ class CustomerAddressController extends Controller implements HasMiddleware
     {
         Gate::authorize('delete', $address);
         try {
-            $address->delete();
+            $this->addressService->deleteAddress($address);
             return $this->success(null, null, 'Address deleted successfully');
         } catch (\Exception $e) {
             return $this->error('Address deleted failed');

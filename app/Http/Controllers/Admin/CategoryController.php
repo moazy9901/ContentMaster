@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\categoryRequest;
 use App\Models\Category;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Str;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller implements HasMiddleware
 {
@@ -18,7 +18,7 @@ class CategoryController extends Controller implements HasMiddleware
     {
         return [new Middleware(['auth:web', 'admin']),];
     }
-
+    public function __construct(protected CategoryService $categoryService) {}
     public function index()
     {
         $categories = Category::orderBy('id', 'asc')->paginate(10);
@@ -27,80 +27,36 @@ class CategoryController extends Controller implements HasMiddleware
 
     public function create()
     {
+        Gate::authorize('create', Category::class);
         return view('admin.categories.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(categoryRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string|max:500',
-            'meta_keywords' => 'nullable|string|max:255',
-        ]);
-
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('categories', 'public');
-        }
-
-        Category::create([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'image' => $imagePath,
-            'meta_title' => $request->meta_title,
-            'meta_description' => $request->meta_description,
-            'meta_keywords' => $request->meta_keywords,
-            'user_id' => Auth::id(),
-        ]);
-
+        Gate::authorize('create' , Category::class);
+        $this->categoryService->store($request->validated());
         return redirect()->route('admin.categories.index')
             ->with('success', 'Category created successfully');
     }
 
     public function edit(Category $category)
     {
+        Gate::authorize('update', $category);
         return view('admin.categories.edit', compact('category'));
     }
 
-    public function update(Request $request, Category $category): RedirectResponse
+    public function update(categoryRequest $request, Category $category): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string|max:500',
-            'meta_keywords' => 'nullable|string|max:255',
-        ]);
-
-        $data = [
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'meta_title' => $request->meta_title,
-            'meta_description' => $request->meta_description,
-            'meta_keywords' => $request->meta_keywords,
-        ];
-
-        if ($request->hasFile('image')) {
-            if ($category->image) {
-                Storage::disk('public')->delete($category->image);
-            }
-            $data['image'] = $request->file('image')->store('categories', 'public');
-        }
-
-        $category->update($data);
-
+        Gate::authorize('update' , Category::class);
+        $this->categoryService->update($category , $request->validated());
         return redirect()->route('admin.categories.index')
             ->with('success', 'Category updated successfully');
     }
 
     public function destroy(Category $category): RedirectResponse
     {
-        if ($category->image) {
-            Storage::disk('public')->delete($category->image);
-        }
-        $category->delete();
+        Gate::authorize('delete', $category);
+        $this->categoryService->destroy($category);
         return redirect()->route('admin.categories.index')
             ->with('success', 'Category deleted successfully');
     }
