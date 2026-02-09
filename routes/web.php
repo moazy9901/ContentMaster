@@ -23,6 +23,9 @@ Route::resource('articles', ArticleController::class);
 Route::post('/articles/validate-slug', [ArticleController::class, 'validateSlug'])->name('articles.validateSlug');
 Route::post('/categories/validate-slug', [CategoryController::class, 'validateSlug'])->name('categories.validateSlug');
 
+Route::get('/fcm-test', function () {
+    return view('/firebase.fcm-test');
+});
 require __DIR__.'/auth.php';
 require __DIR__.'/lang.php';
 require __DIR__.'/admin.php';
